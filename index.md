@@ -1,37 +1,115 @@
-## Welcome to GitHub Pages
+## we are trying to analyze the python file by going through the same steps.
 
-You can use the [editor on GitHub](https://github.com/Cy83rTR0n/TamilCTF_reverseme/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```py
+import numpy as np
+flag = 'TamilCTF{this_one_is_a_liability_dont_fall_for_it}'
 ```
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+- The above is actually a fake flag 
 
-### Jekyll Themes
+- But we will use it for analysis purpose.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Cy83rTR0n/TamilCTF_reverseme/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+```py
+np.random.seed(369)
 
-### Support or Contact
+data = np.array([ord(c) for c in flag ])
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+print('data :',data)
+```
+
+- random function which is used as the seed here is not actually random, if we every time repeat lines 8 and 9 we will get the same data array.
+
+```py
+extra = np.random.randint(1,5,len(flag))
+print('extra :',extra)
+```
+
+- similarly the above also we will get everytime the same array if we follow lines 8,9,17.
+
+
+```py 
+product = np.multiply(data,extra)
+
+print('product :',product) 
+
+temp1 = [x for x in data ]
+
+print('temp1:',temp1)
+
+temp2 = [ord(x) for x in 'dondaVSclb' * 5]
+
+print('temp2',temp2)
+
+c = [ temp1[i] ^ temp2[i] for i in range(len(temp1)) ]
+
+print('c:',c)
+
+flagdata = ('').join(hex(x)[2:].zfill(2) for x in c)
+
+print('flagdata :',flag)
+
+```
+
+- here in the lines 39 and 40 we see that first the items in c are converted to hex that is 48 to 0x30 and then we neglect '0x' and then they are joined together. 
+
+- now upto this part whatever we did was actually for analysing the code.
+
+- exploit starts from here 
+
+```py
+
+real_flag = '300e030d0d1507251700361a3a0127662120093d551c311029330c53022e1d3028541315363c5e3d063d0b250a090c52021f'
+
+```
+
+
+- above given is the final result of the actual flag.
+
+- let's reverse it
+
+```py
+real = list()
+
+for i in range(0,100,2):
+
+  real.append(real_flag[i:i+2]) 
+
+print('real:',real)
+```
+
+- We get the required array with elements but now we need to get the decimal output for our hex numbers.
+
+```py
+real_2 = list()
+
+for i in real:
+
+  real_2.append(int(i,16)) 
+
+print('real_2',real_2)
+```
+- our temp2 array remains the same 
+
+```py
+print('temp2 :',temp2)
+
+temp3 = list()
+temp3 = [temp2[i] ^ real_2[i] for i in range(len(temp2))]
+
+temp4 = list()
+for i in temp3:
+
+  temp4.append(chr(i))
+
+print(''.join(temp4))
+```
+
+# Flag
+
+`TamilCTF{bRuTeF0rCe_1s_tHe_0nLy_F0rCe_2_bReAk__1n}`
+
+
+
+
+
+ 
