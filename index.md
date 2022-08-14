@@ -104,7 +104,7 @@ for i in temp3:
 print(''.join(temp4))
 ```
 
-# Flag
+# Flag is
 
 `TamilCTF{bRuTeF0rCe_1s_tHe_0nLy_F0rCe_2_bReAk__1n}`
 
